@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script>
+        // Load common header synchronously so styles load first
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'header.html', false);
+        xhr.send();
+        document.write(xhr.responseText);
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -14,14 +22,14 @@
     <meta property="og:url" content="https://meteo.matorras.com/">
     <meta property="og:title" content="Meteomat - Probabilistic Weather Forecasts">
     <meta property="og:description" content="Interactive weather dashboard with ensemble forecasts and uncertainty visualization for Europe.">
-    <meta property="og:image" content="https://meteo.matorras.com/preview.png">
+    <meta property="og:image" content="https://meteo.matorras.com/preview.jpg">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://meteo.matorras.com/">
     <meta property="twitter:title" content="Meteomat - Probabilistic Weather Forecasts">
     <meta property="twitter:description" content="Interactive weather dashboard with ensemble forecasts and uncertainty visualization for Europe.">
-    <meta property="twitter:image" content="https://meteo.matorras.com/preview.png">    <style>
+    <meta property="twitter:image" content="https://meteo.matorras.com/preview.jpg">    <style>
         body { margin: 0; overflow: hidden; }
         iframe { 
             position: absolute;
@@ -35,8 +43,14 @@
 <body>
     <iframe src="https://pmatorras-meteomat.hf.space"></iframe>
 
-<div style="position: fixed; bottom: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 5px 10px; font-size: 12px; border-radius: 4px;">
-    © 2026 Pablo Matorras-Cuevas
+<div style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; padding: 8px 20px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; z-index: 1000;">
+        <div>
+        Data: ECMWF via <a href="https://open-meteo.com" style="color: #6b9bd1;">Open-Meteo</a> | 
+        Geocoding: <a href="https://nominatim.openstreetmap.org" style="color: #6b9bd1;">OpenStreetMap</a>
+    </div>
+    <div>
+        © 2026 <a href="https://pablo.matorras.com" style="color: #6b9bd1;">Pablo Matorras-Cuevas</a>
+    </div>
 </div>
 
 </body>
