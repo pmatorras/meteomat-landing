@@ -41,15 +41,31 @@
     <meta name="google-site-verification" content="Jh1ootM9pyeifkRVoP8GC-bwDT56gFhGENAFxHYnv6E" />
 </head>
 <body>
-    <iframe src="https://pmatorras-meteomat.hf.space"></iframe>
+    <iframe id="app" src="https://pmatorras-meteomat.hf.space/"></iframe>
 
+    <script>
+    const HF_URL = "https://pmatorras-meteomat.hf.space/";
+    const FALLBACK_URL = "https://meteomat.streamlit.app/";
+
+    const iframe = document.getElementById("app");
+    let loaded = false;
+
+    iframe.addEventListener("load", () => {
+        loaded = true;
+    });
+
+    // If HF didn't load within 12s, fall back
+    setTimeout(() => {
+        if (!loaded) iframe.src = FALLBACK_URL;
+    }, 12000);
+    </script>
 <div style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; padding: 8px 20px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; z-index: 1000;">
         <div>
         Data: ECMWF via <a href="https://open-meteo.com" style="color: #6b9bd1;">Open-Meteo</a> | 
         Geocoding: <a href="https://nominatim.openstreetmap.org" style="color: #6b9bd1;">OpenStreetMap</a>
     </div>
     <div>
-        © 2026 <a href="https://pablo.matorras.com" style="color: #6b9bd1;">Pablo Matorras-Cuevas</a>
+        <a href="https://github.com/pmatorras/meteomat/" style="color: #ffffff; text-decoration: none;"> meteomat v1.1.0</a> | © 2026 <a href="https://pablo.matorras.com" style="color: #6b9bd1;">Pablo Matorras-Cuevas</a>
     </div>
 </div>
 
