@@ -1,17 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script>
-        // Load common header synchronously so styles load first
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', 'header.html', false);
-        xhr.send();
-        document.write(xhr.responseText);
-    </script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <script src="/header.js"></script>
+    <link rel="canonical" href="https://meteo.matorras.com/">
+
     <!-- Primary Meta Tags -->
     <title>Meteomat - Probabilistic Weather Forecasts</title>
     <meta name="title" content="Meteomat - Probabilistic Weather Forecasts">
@@ -39,6 +33,28 @@
         }
     </style>
     <meta name="google-site-verification" content="Jh1ootM9pyeifkRVoP8GC-bwDT56gFhGENAFxHYnv6E" />
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Meteomat",
+        "url": "https://meteo.matorras.com",
+        "description": "Interactive weather dashboard with ECMWF ensemble forecasts and probabilistic uncertainty visualization for Europe.",
+        "applicationCategory": "WeatherApplication",
+        "operatingSystem": "Web",
+        "author": {
+            "@type": "Person",
+            "name": "Pablo Matorras-Cuevas",
+            "url": "https://pablo.matorras.com"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "EUR"
+        }
+    }
+    </script>
+
 </head>
 <body>
     <iframe id="app" src="https://pmatorras-meteomat.hf.space/"></iframe>
