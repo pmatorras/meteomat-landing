@@ -79,6 +79,17 @@
     setTimeout(() => {
         if (!loaded) iframe.src = FALLBACK_URL;
     }, 12000);
+
+    // Listen for location/language updates from the iframe and update address bar
+    window.addEventListener("message", (e) => {
+        if (e.origin !== "https://pmatorras-meteomat.hf.space") return;
+        const p = new URLSearchParams(window.location.search);
+        p.set("lat", e.data.lat);
+        p.set("lon", e.data.lon);
+        p.set("lang", e.data.lang);
+        if (e.data.name) p.set("name", e.data.name);
+        window.history.replaceState({}, "", "?" + p.toString());
+    });
     </script>
 <div style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; padding: 8px 20px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; z-index: 1000;">
         <div>
@@ -86,7 +97,7 @@
         Geocoding: <a href="https://nominatim.openstreetmap.org" style="color: #6b9bd1;">OpenStreetMap</a>
     </div>
     <div>
-        <a href="https://github.com/pmatorras/meteomat/" style="color: #ffffff; text-decoration: none;"> meteomat v1.2.1</a> | © 2026 <a href="https://pablo.matorras.com" style="color: #6b9bd1;">Pablo Matorras-Cuevas</a>
+        <a href="https://github.com/pmatorras/meteomat/" style="color: #ffffff; text-decoration: none;"> meteomat v1.3.1</a> | © 2026 <a href="https://pablo.matorras.com" style="color: #6b9bd1;">Pablo Matorras-Cuevas</a>
     </div>
 </div>
 
