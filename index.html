@@ -57,13 +57,18 @@
 
 </head>
 <body>
-    <iframe id="app" src="https://pmatorras-meteomat.hf.space/"></iframe>
+    <iframe id="app" src=""></iframe>
 
     <script>
-    const HF_URL = "https://pmatorras-meteomat.hf.space/";
+    const HF_BASE = "https://pmatorras-meteomat.hf.space/";
     const FALLBACK_URL = "https://meteomat.streamlit.app/";
 
     const iframe = document.getElementById("app");
+
+    // Forward query params from meteo.matorras.com to the iframe
+    const params = new URLSearchParams(window.location.search);
+    iframe.src = params.toString() ? HF_BASE + "?" + params.toString() : HF_BASE;
+
     let loaded = false;
 
     iframe.addEventListener("load", () => {
