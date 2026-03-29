@@ -83,11 +83,12 @@
     // Listen for location/language updates from the iframe and update address bar
     window.addEventListener("message", (e) => {
         if (e.origin !== "https://pmatorras-meteomat.hf.space") return;
+        if (e.data?.type !== "SET_QUERY_PARAM") return;
+        const inner = new URLSearchParams(e.data.queryParams);
         const p = new URLSearchParams(window.location.search);
-        p.set("lat", e.data.lat);
-        p.set("lon", e.data.lon);
-        p.set("lang", e.data.lang);
-        if (e.data.name) p.set("name", e.data.name);
+        if (inner.get("lat")) p.set("lat", inner.get("lat"));
+        if (inner.get("lon")) p.set("lon", inner.get("lon"));
+        if (inner.get("name")) p.set("name", inner.get("name"));
         window.history.replaceState({}, "", "?" + p.toString());
     });
     </script>
