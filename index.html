@@ -90,7 +90,6 @@
         if (!lat || !lon) return;
 
         const p = new URLSearchParams();
-        if (lang) p.set("lang", lang);
 
         if (name) {
             // Clean URL: just the name (app.py can resolve it back to coords)
@@ -100,6 +99,7 @@
             p.set("lat", lat);
             p.set("lon", lon);
         }
+        if (lang && lang !== "en") p.set("lang", lang);  // lang last, and skip if default
 
         window.history.replaceState({}, "", "?" + p.toString());
     });
