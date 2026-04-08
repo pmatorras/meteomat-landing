@@ -10,28 +10,84 @@
     <title>Meteomat - Probabilistic Weather Forecasts</title>
     <meta name="title" content="Meteomat - Probabilistic Weather Forecasts">
     <meta name="description" content="Interactive weather dashboard with ensemble forecasts and uncertainty visualization for Europe. See forecast confidence ranges, not just single predictions.">
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://meteo.matorras.com/">
     <meta property="og:title" content="Meteomat - Probabilistic Weather Forecasts">
     <meta property="og:description" content="Interactive weather dashboard with ensemble forecasts and uncertainty visualization for Europe.">
     <meta property="og:image" content="https://meteo.matorras.com/preview.jpg">
-    
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://meteo.matorras.com/">
     <meta property="twitter:title" content="Meteomat - Probabilistic Weather Forecasts">
     <meta property="twitter:description" content="Interactive weather dashboard with ensemble forecasts and uncertainty visualization for Europe.">
-    <meta property="twitter:image" content="https://meteo.matorras.com/preview.jpg">    <style>
-        body { margin: 0; overflow: hidden; }
-        iframe { 
+    <meta property="twitter:image" content="https://meteo.matorras.com/preview.jpg">
+
+     <style>
+        body { margin: 0; }
+
+        #app-description {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url('preview.jpg') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        #app-description::before {
+            content: '';
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        #app-description > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        #app-description h1 {
+            font-family: sans-serif;
+            font-size: 2em;
+            color: #ffffff;
+            margin-bottom: 0.5em;
+        }
+
+        #app-description p {
+            color: #cccccc;
+            font-family: sans-serif;
+            font-size: 1.1em;
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 1em;
+        }
+
+        #app-description ul {
+            list-style: none;
+            padding: 0;
+            color: #a0a0a0;
+            font-family: sans-serif;
+            font-size: 0.95em;
+            line-height: 2;
+        }
+
+        iframe#app {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             border: none;
+            display: none; /* hidden until JS shows it */
         }
     </style>
+
     <meta name="google-site-verification" content="Jh1ootM9pyeifkRVoP8GC-bwDT56gFhGENAFxHYnv6E">
     <script type="application/ld+json">
     {
@@ -57,12 +113,39 @@
 
 </head>
 <body>
+
+    <!-- Static content for Google — hidden once iframe loads -->
+    <div id="app-description">
+        <h1>Meteomat — Probabilistic Weather Forecasts</h1>
+        <p>Interactive weather dashboard showing ECMWF ensemble forecasts for Europe.
+        Visualizes forecast uncertainty bands so you see confidence ranges, not just
+        single predictions.</p>
+        <ul>
+            <li>ECMWF ensemble model data via Open-Meteo</li>
+            <li>Probabilistic uncertainty visualization</li>
+            <li>Coverage across Europe</li>
+            <li>Built with Streamlit and Plotly</li>
+        </ul>
+    </div>
+
     <iframe id="app" src="about:blank"></iframe>
+
+    <div style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; padding: 8px 20px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; z-index: 1000;">
+        <div>
+            Data: ECMWF via <a href="https://open-meteo.com" style="color: #6b9bd1;">Open-Meteo</a> |
+            Geocoding: <a href="https://nominatim.openstreetmap.org" style="color: #6b9bd1;">OpenStreetMap</a>
+        </div>
+        <div>
+            <a href="https://github.com/pmatorras/meteomat/" style="color: #ffffff; text-decoration: none;">meteomat v1.5.1</a> | © 2026 <a href="https://pablo.matorras.com" style="color: #6b9bd1;">Pablo Matorras-Cuevas</a>
+        </div>
+    </div>
+
 
     <script>
     const HF_BASE = "https://pmatorras-meteomat.hf.space/";
     const FALLBACK_URL = "https://meteomat.streamlit.app/";
 
+    const desc = document.getElementById("app-description");
     const iframe = document.getElementById("app");
 
     // Forward query params from meteo.matorras.com to the iframe
@@ -73,6 +156,8 @@
 
     iframe.addEventListener("load", () => {
         loaded = true;
+        iframe.style.display = "block";  // show iframe
+        desc.style.display = "none";     // hide description
     });
 
     // If HF didn't load within 12s, fall back
@@ -92,27 +177,16 @@
         const p = new URLSearchParams();
 
         if (name) {
-            // Clean URL: just the name (app.py can resolve it back to coords)
             p.set("name", name);
         } else {
-            // Fallback for ocean clicks or wherever reverse geocode found nothing
             p.set("lat", lat);
             p.set("lon", lon);
         }
-        if (lang && lang !== "en") p.set("lang", lang);  // lang last, and skip if default
+        if (lang && lang !== "en") p.set("lang", lang);
 
         window.history.replaceState({}, "", "?" + p.toString());
     });
     </script>
-<div style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; padding: 8px 20px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; z-index: 1000;">
-        <div>
-        Data: ECMWF via <a href="https://open-meteo.com" style="color: #6b9bd1;">Open-Meteo</a> | 
-        Geocoding: <a href="https://nominatim.openstreetmap.org" style="color: #6b9bd1;">OpenStreetMap</a>
-    </div>
-    <div>
-        <a href="https://github.com/pmatorras/meteomat/" style="color: #ffffff; text-decoration: none;"> meteomat v1.5.1</a> | © 2026 <a href="https://pablo.matorras.com" style="color: #6b9bd1;">Pablo Matorras-Cuevas</a>
-    </div>
-</div>
 
 </body>
 </html>
