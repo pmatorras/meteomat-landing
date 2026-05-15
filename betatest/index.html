@@ -59,7 +59,7 @@
 
 
     <script>
-    const HF_BASE = "https://pmatorras-meteomat-backup.hf.space/";
+    const HF_BASE = "https://pmatorras-meteomat-betatest.hf.space/";
     const FALLBACK_URL = "https://meteomat.streamlit.app/";
 
     const desc = document.getElementById("app-description");
@@ -85,7 +85,7 @@
     // Listen for location/language updates from the iframe and update address bar.
     // app.py sends: { lat, lon, lang, name }  (plain object, no .type wrapper)
     window.addEventListener("message", (e) => {
-        if (e.origin !== "https://pmatorras-meteomat-backup.hf.space") return;
+        if (e.origin !== "https://pmatorras-meteomat-betatest.hf.space/") return;
         const { lat, lon, lang, name } = e.data;
 
         // Require at minimum a lat/lon to do anything
