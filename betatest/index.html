@@ -49,17 +49,24 @@
 
     <div style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; padding: 8px 20px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; z-index: 1000;">
         <div>
-            Data: ECMWF via <a href="https://open-meteo.com" style="color: #6b9bd1;">Open-Meteo</a> |
-            Geocoding: <a href="https://nominatim.openstreetmap.org" style="color: #6b9bd1;">OpenStreetMap</a>
+            <button id="more-info-btn" onclick="openMethodology()" style="background:none;border:none;color:#ffffff;cursor:pointer;font-size:11px;padding:0;font-family:inherit;">Meteomat (test): Probabilistic weather forecasts <span style="color:#6b9bd1;font-weight:bold;">(+more info)</span></button>
         </div>
         <div>
-            <a id="version-link" href="https://github.com/pmatorras/meteomat/" style="color: #ffffff; text-decoration: none;">meteomat <strong>(test)</strong> v1.6.1</a> | © 2026 <a href="https://pablo.matorras.com" style="color: #6b9bd1;">Pablo Matorras-Cuevas</a>
+            <span id="version-label">v1.6.1</span> | © 2026 <a href="https://pablo.matorras.com" style="color: #6b9bd1;">Pablo Matorras-Cuevas</a>
+        </div>
+    </div>
+
+    <div id="methodology-modal" onclick="closeMethodologyIfBackdrop(event)">
+        <div id="methodology-box">
+            <button id="methodology-close" onclick="closeMethodology()">x</button>
+            <h2>How Meteomat works</h2>
+            <div id="methodology-content"><em style="color:#666">Loading…</em></div>
         </div>
     </div>
 
 
     <script>
-    const HF_BASE = "https://pmatorras-meteomat-backup.hf.space/";
+    const HF_BASE = "https://pmatorras-meteomat-betatest.hf.space/";
     const FALLBACK_URL = "https://meteomat.streamlit.app/";
 
     const desc = document.getElementById("app-description");
@@ -85,7 +92,7 @@
     // Listen for location/language updates from the iframe and update address bar.
     // app.py sends: { lat, lon, lang, name }  (plain object, no .type wrapper)
     window.addEventListener("message", (e) => {
-        if (e.origin !== "https://pmatorras-meteomat-backup.hf.space") return;
+        if (e.origin !== "https://pmatorras-meteomat-betatest.hf.space") return;
         const { lat, lon, lang, name } = e.data;
 
         // Require at minimum a lat/lon to do anything
@@ -104,13 +111,80 @@
         window.history.replaceState({}, "", "?" + p.toString());
     });
 
-    fetch('https://raw.githubusercontent.com/pmatorras/meteomat/master/pyproject.toml')
-        .then(r => r.text())
-        .then(text => {
-            const match = text.match(/^version\s*=\s*"([^"]+)"/m);
-            if (match) document.getElementById('version-link').textContent = 'meteomat v' + match[1];
+    let methodologyData = null;
+
+    fetch('https://raw.githubusercontent.com/pmatorras/meteomat/dev/docs/methodology.json')
+        .then(r => r.json())
+        .then(d => {
+            methodologyData = d;
+            if (d.version) document.getElementById('version-label').textContent = 'v' + d.version;
         })
         .catch(() => {});
+
+    function openMethodology() {
+        document.getElementById('methodology-modal').classList.add('open');
+        if (methodologyData) { renderMethodology(methodologyData); return; }
+        fetch('https://raw.githubusercontent.com/pmatorras/meteomat/dev/docs/methodology.json')
+            .then(r => r.json())
+            .then(renderMethodology)
+            .catch(() => {
+                document.getElementById('methodology-content').innerHTML = '<em style="color:#888">Could not load methodology data.</em>';
+            });
+    }
+
+    function closeMethodology() {
+        document.getElementById('methodology-modal').classList.remove('open');
+    }
+
+    function closeMethodologyIfBackdrop(e) {
+        if (e.target === document.getElementById('methodology-modal')) closeMethodology();
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMethodology(); });
+
+    function renderMethodology(d) {
+        methodologyData = d;
+        const typeLabel = { weather: 'Weather', marine: 'Marine' };
+        const sources = d.sources.map(s => `
+            <tr>
+                <td>${s.product}</td>
+                <td>${s.resolution_km} km</td>
+                <td>${s.members ?? '—'}</td>
+                <td>${s.horizon_days}d</td>
+                <td>${typeLabel[s.type] ?? s.type}</td>
+            </tr>`).join('');
+
+        const p = d.parameters;
+        const limitations = d.limitations.map(l => `
+            <p class="limitation-title">${l.title}</p>
+            <p>${l.body}</p>`).join('');
+
+        document.getElementById('methodology-content').innerHTML = `
+            <p>${d.description}</p>
+
+            <h3>Data sources</h3>
+            <table>
+                <thead><tr><th>Product</th><th>Resolution</th><th>Members</th><th>Horizon</th><th>Type</th></tr></thead>
+                <tbody>${sources}</tbody>
+            </table>
+
+            <h3>Uncertainty &amp; blending</h3>
+            <p>
+                Uncertainty bands show the <strong>${p.uncertainty_band_pct.low}-${p.uncertainty_band_pct.high}th percentile</strong> range across ensemble members.
+                Rain is only counted when ≥ ${p.rain_threshold_mm} mm/h.
+                When rain is expected, forecasts blend ensemble (${p.rain_blend_hres_rain.ensemble * 100}%) and HRES (${p.rain_blend_hres_rain.hres * 100}%);
+                when no rain is expected, the blend shifts to ${p.rain_blend_hres_no_rain.ensemble * 100}% / ${p.rain_blend_hres_no_rain.hres * 100}%.
+            </p>
+
+            <h3>Limitations</h3>
+            ${limitations}
+
+            <p style="margin-top:18px;border-top:1px solid rgba(255,255,255,0.08);padding-top:14px;">
+                <a href="https://github.com/pmatorras/meteomat/" style="color:#6b9bd1;">View source on GitHub</a> ·
+                Deployed on <a href="https://huggingface.co/spaces/pmatorras/meteomat-betatest" style="color:#6b9bd1;">Hugging Face Spaces</a>
+            </p>
+        `;
+    }
     </script>
 
 </body>

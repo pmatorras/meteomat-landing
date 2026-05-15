@@ -58,3 +58,102 @@ iframe#app {
     border: none;
     display: none;
 }
+
+/* Methodology modal */
+#methodology-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+}
+
+#methodology-modal.open {
+    display: flex;
+}
+
+#methodology-box {
+    background: #1a1a2e;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 28px 32px;
+    max-width: 640px;
+    width: calc(100% - 48px);
+    max-height: 80vh;
+    overflow-y: auto;
+    color: #ccc;
+    font-family: sans-serif;
+    font-size: 0.92em;
+    line-height: 1.6;
+    position: relative;
+}
+
+#methodology-box h2 {
+    margin: 0 0 12px;
+    font-size: 1.2em;
+    color: #fff;
+}
+
+#methodology-box h3 {
+    margin: 20px 0 8px;
+    font-size: 0.95em;
+    color: #6b9bd1;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+#methodology-box p {
+    margin: 0 0 10px;
+    color: #bbb;
+}
+
+#methodology-box table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+    margin-bottom: 6px;
+}
+
+#methodology-box th {
+    text-align: left;
+    color: #888;
+    font-weight: normal;
+    padding: 4px 8px 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+#methodology-box td {
+    padding: 5px 8px 5px 0;
+    color: #ccc;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+#methodology-box .limitation-title {
+    color: #e0e0e0;
+    font-weight: bold;
+    margin: 14px 0 4px;
+}
+
+#methodology-box .limitation-title:first-of-type {
+    margin-top: 0;
+}
+
+#methodology-close {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 1.4em;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+}
+
+#methodology-close:hover {
+    color: #fff;
+}
